@@ -18,6 +18,7 @@ const io = socketIO(server);
 const connectDB = require("./db/connect.js")
 
 const authRouter = require("./routes/authRouter");
+const editor = require("./routes/editorroute.js")
 // const userRouter = require("./routes/userroutes.js");
 
 
@@ -42,6 +43,8 @@ app.use(express.static("views"));
 
 app.use(cookieParser(process.env.JWT_SECRET));
 app.use("/api/v1/auth", authRouter);
+app.use("/api/v1/program-repo", editor);
+
 // app.use("/api/v1/users", userRouter);
 
 
