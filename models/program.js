@@ -2,8 +2,6 @@
 
 // Import necessary modules
 const mongoose = require('mongoose');
-
-// Define the schema for the Program model
 const programSchema = new mongoose.Schema({
     title: {
         type: String,
@@ -18,13 +16,15 @@ const programSchema = new mongoose.Schema({
         enum: ['pending', 'approved', 'rejected'],
         default: 'pending'
     },
+    assignedEditor: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Editor' // Reference to the Editor model
+    },
     createdAt: {
         type: Date,
         default: Date.now
     }
 });
-
-// Create the Program model based on the schema
 const Program = mongoose.model('Program', programSchema);
 
 // Export the Program model
