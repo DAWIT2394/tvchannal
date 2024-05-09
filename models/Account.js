@@ -22,6 +22,10 @@ const accountSchema = new mongoose.Schema({
         enum: ['hr', 'admin'],
         default: 'hr'
     },
+    position: {
+        type: String,
+        required: true
+    },
     createdAt: {
         type: Date,
         default: Date.now
