@@ -21,9 +21,13 @@ phone_number: {
     type: String,
     required: true,
   },
+  position: {
+    type: String,
+    required: true
+},
   role: {
     type: String,
-    enum:['user', 'admin','mechanicsr','garage'],
+    enum:['hr', 'admin','worker'],
     required: true,
   },
 

@@ -1,10 +1,10 @@
-const Account = require('../models/Account');
+const User = require('../models/user');
 
 exports.createAccount = async (req, res) => {
-    const { username, password, email, role, position } = req.body;
+    const { fullname, phone_number, email, password, role, position } = req.body;
     try {
-        const account = new Account({ username, password, email, role, position });
-        await account.save();
+        const user = new User({ fullname, phone_number, email, password, role, position });
+        await user.save();
         res.status(201).json({ message: 'Account created successfully' });
     } catch (err) {
         res.status(400).json({ message: err.message });
@@ -17,15 +17,15 @@ exports.getAllAccounts = async (req, res) => {
     const skip = (page - 1) * limit;
 
     try {
-        const totalAccounts = await Account.countDocuments();
-        const totalPages = Math.ceil(totalAccounts / limit);
+        const totalUsers = await User.countDocuments();
+        const totalPages = Math.ceil(totalUsers / limit);
 
-        const accounts = await Account.find()
+        const users = await User.find()
             .skip(skip)
             .limit(limit);
 
         res.json({
-            accounts,
+            users,
             currentPage: page,
             totalPages
         });
@@ -38,11 +38,11 @@ exports.getAllAccounts = async (req, res) => {
 exports.getAccountById = async (req, res) => {
     const { id } = req.params;
     try {
-        const account = await Account.findById(id);
-        if (!account) {
-            return res.status(404).json({ message: 'Account not found' });
+        const user = await User.findById(id);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
         }
-        res.json(account);
+        res.json(user);
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
@@ -50,10 +50,10 @@ exports.getAccountById = async (req, res) => {
 
 exports.updateAccount = async (req, res) => {
     const { id } = req.params;
-    const { username, password, email, role, position } = req.body;
+    const { fullname, phone_number, email, password, role, position } = req.body;
     try {
-        const updatedAccount = await Account.findByIdAndUpdate(id, { username, password, email, role, position }, { new: true });
-        res.json(updatedAccount);
+        const updatedUser = await User.findByIdAndUpdate(id, { fullname, phone_number, email, password, role, position }, { new: true });
+        res.json(updatedUser);
     } catch (err) {
         res.status(400).json({ message: err.message });
     }
@@ -62,8 +62,8 @@ exports.updateAccount = async (req, res) => {
 exports.deleteAccount = async (req, res) => {
     const { id } = req.params;
     try {
-        await Account.findByIdAndDelete(id);
-        res.json({ message: 'Account deleted' });
+        await User.findByIdAndDelete(id);
+        res.json({ message: 'User deleted' });
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
