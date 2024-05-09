@@ -2,32 +2,6 @@ const { StatusCodes } = require("http-status-codes");
 const User = require("../models/user");
 const { attachCookiesToResponse, createTokenUser } = require("../utils");
 
-const register = async (req, res) => {
-  try {
-    const { fullname, position, email, password, phone_number, role } = req.body;
-
-    const emailAlreadyExists = await User.findOne({ email });
-    if (emailAlreadyExists) {
-      return res.status(StatusCodes.BAD_REQUEST).json({ error: "Email already exists" });
-    }
-
-    const user = await User.create({
-      fullname,
-      email,
-      password,
-      phone_number,
-      position,
-      role,
-    });
-
-    const tokenUser = createTokenUser(user);
-    res.status(StatusCodes.CREATED).json({ user: tokenUser });
-  } catch (error) {
-    console.error(error);
-    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: "Internal server error" });
-  }
-};
-
 const signin = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -48,15 +22,17 @@ const signin = async (req, res) => {
       return res.status(StatusCodes.UNAUTHORIZED).json({ error: "Incorrect password" });
     }
 
-    const tokenUser = createTokenUser(user);
-    attachCookiesToResponse({ res, user: tokenUser });
+    // Generate token for the user
+    const token = createTokenUser(user);
 
-    res.status(StatusCodes.OK).json({ user: tokenUser });
+    // Return just the token as JSON
+    res.status(StatusCodes.OK).json({ token });
   } catch (error) {
     console.error(error);
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: "Internal server error" });
   }
 };
+
 
 const logout = async (req, res) => {
   try {
@@ -72,7 +48,7 @@ const logout = async (req, res) => {
 };
 
 module.exports = {
-  register,
+
   signin,
   logout,
 };

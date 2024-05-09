@@ -2,8 +2,9 @@
 const express = require('express');
 const router = express.Router();
 const accountController = require('../controllers/accountController');
+const authMiddleware = require('../middleware/authentication');
 
-router.post('/', accountController.createAccount);
+router.post('/',accountController.createAccount);
 router.get('/', accountController.getAllAccounts);
 router.get('/:id', accountController.getAccountById);
 router.put('/:id', accountController.updateAccount);

@@ -1,20 +1,14 @@
 const express = require("express");
 const router = express.Router();
 const {
-  register,
   signin,
 logout
 } = require("../controllers/authController");
-const {
-  authenticateUser,
-  authorizePermissions,
-} = require("../middleware/authentication");
+const authMiddleware = require('../middleware/authentication');
 
-router.post(
-  "/register",
-  register
-);
-router.post("/login", signin);
+
+// router.post(  "/register", register);
+router.post("/login",authMiddleware.authenticateUser, signin);
 router.get("/logout", logout);
 // router.post("/reset-password", ResetPassword);
 

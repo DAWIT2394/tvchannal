@@ -1,46 +1,35 @@
-const { isTokenValid } = require("../utils");
+// middleware/authMiddleware.js
 
+const jwt = require('jsonwebtoken');
+const User = require('../models/user');
 
-const authenticateUser = async (req, res, next) => {
-  const token = req.signedCookies.token;
-
-  if (!token) {
-    return res.status(401).json({ error: "Authentication Invalid" });
-  }
-
+exports.authenticateUser = (req, res, next) => {
   try {
-    const { full_name, userId, role, api_permission } = isTokenValid({ token });
-    req.user = { full_name, userId, role, api_permission };
+    const token = req.headers.authorization.split(' ')[1];
+    if (!token) {
+      return res.status(401).json({ message: 'Missing token. Authentication failed' });
+    }
+    const decodedToken = jwt.verify(token, 'secretKey');
+    req.userData = { userId: decodedToken.userId, isAdmin: decodedToken.isAdmin };
     next();
   } catch (error) {
-    return res.status(401).json({ error: "Authentication Invalid" });
+    console.error("Authentication error:", error);
+    if (error instanceof jwt.TokenExpiredError) {
+      return res.status(401).json({ message: 'Token expired. Authentication failed' });
+    }
+    return res.status(401).json({ message: 'Invalid token. Authentication failed' });
   }
 };
 
-const authorizePermissions = (...api_permission) => {
-  return (req, res, next) => {
-    if (!api_permission.includes(req.user.api_permission)) {
-      return res
-        .status(403)
-        .json({ error: "Unauthorized to access this action " });
+
+exports.checkIsAdmin = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.userData.userId);
+    if (!user.isAdmin) {
+      return res.status(403).json({ message: 'Access denied. You are not an admin' });
     }
     next();
-  };
-};
-
-const authorizePermissions1 = (...roles) => {
-  return (req, res, next) => {
-    if (!roles.includes(req.user.role)) {
-      return res
-        .status(403)
-        .json({ error: "Unauthorized to access this route " });
-    }
-    next();
-  };
-};
-
-module.exports = {
-  authenticateUser,
-  authorizePermissions,
-  authorizePermissions1
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 };
