@@ -5,6 +5,7 @@ const router = express.Router();
 const adminController = require('../controllers/adminController');
 
 // Routes for accessing editor reports and general statistics
+
 router.get('/editor-reports', adminController.getEditorReports);
 router.get('/general-statistics', adminController.getGeneralStatistics);
 

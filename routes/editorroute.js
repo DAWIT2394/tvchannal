@@ -7,7 +7,7 @@ const ProductionManagercontrollers = require('../controllers/ProductionManagerco
 const authMiddleware = require('../middleware/authentication');
 
 // Get all reports
-router.get('/all',authMiddleware.checkIsAdmin,authMiddleware.authenticateUser, Editorcontrollers.getAllReports);
+router.get('/all',Editorcontrollers.getAllReports);
 
 // Create a report
 router.post('/', Editorcontrollers.createReport);
